@@ -51,7 +51,7 @@ public class ProducerServlet extends HttpServlet {
 
         page.append("<html>");
         page.append("<head>");
-        page.append("<title>MarkLogic Kafka Connector - Producer service</title>");
+        page.append("<title>Kafka MarkLogic & Jetty Connector - Producer service</title>");
         page.append("</head>");
         page.append("<body>");
         page.append("<div>");
