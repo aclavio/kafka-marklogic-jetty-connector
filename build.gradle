@@ -1,0 +1,135 @@
+plugins {
+    id 'java'
+    id 'net.saliman.properties' version '1.4.6'
+    id "com.github.jk1.dependency-license-report" version "1.3"
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+configurations {
+    documentation
+    assets
+}
+
+dependencies {
+    compile ("com.marklogic:ml-javaclient-util:3.10.0") {
+        exclude module: "jdom2"
+        exclude module: "marklogic-xcc"
+        exclude module: "spring-context"
+    }
+    compile "org.eclipse.jetty:jetty-servlet:9.3.14.v20161028"
+
+    compileOnly "org.apache.kafka:connect-api:2.3.0"
+
+    testImplementation "org.apache.kafka:connect-api:2.3.0"
+    testImplementation "org.apache.kafka:connect-runtime:2.3.1"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.2"
+
+    testRuntime "ch.qos.logback:logback-classic:1.1.8"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:5.4.2"
+    testRuntime "org.slf4j:jcl-over-slf4j:1.7.22"
+    testRuntime "org.slf4j:slf4j-api:1.7.22"
+
+    documentation files('LICENSE.txt')
+    documentation files('README.md')
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// Customize the Java plugin's jar task to produce a "fat" jar with all dependencies included
+jar {
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+task copyJarToKafka(type: Copy) {
+    description = "Used for local development and testing; copies the jar to your local Kafka install"
+    from "build/libs"
+    into "${kafkaHome}/libs"
+}
+copyJarToKafka.mustRunAfter(jar)
+
+task copyPropertyFilesToKafka(type: Copy) {
+    description = "Used for local development and testing; copies the properties files to your local Kafka install"
+    from "config"
+    into "${kafkaHome}/config"
+}
+
+task deploy {
+    description = "Used for local development and testing; builds the jar and copies it and the properties files to your local Kafka install"
+    dependsOn = ["jar", "copyJarToKafka", "copyPropertyFilesToKafka"]
+}
+
+// Tasks for building the archive required for submitting to the Confluence Connector Hub
+import org.apache.tools.ant.filters.*
+task connectorArchive_CopyManifestToBuildDirectory(type: Copy) {
+    description = "Copy the project manifest into the root folder"
+    group = 'connector archive'
+
+    from '.'
+    include 'manifest.json'
+    into 'build/connectorArchive'
+    filter(ReplaceTokens, tokens:[CONFLUENT_USER:componentOwner, VERSION:version])
+}
+
+task connectorArchive_CopyAssetsToBuildDirectory(type: Copy) {
+    description = "Copy the project assets into the assets folder"
+    group = 'connector archive'
+
+    from configurations.assets
+    into 'build/connectorArchive/assets'
+}
+
+task connectorArchive_CopyEtcToBuildDirectory(type: Copy) {
+    description = "Copy the project support files into the etc folder"
+    group = 'connector archive'
+
+    from 'config'
+    include '*'
+    into 'build/connectorArchive/etc'
+}
+
+task connectorArchive_CopyDocumentationToBuildDirectory(type: Copy) {
+    description = "Copy the project documentation into the doc folder"
+    group = 'connector archive'
+
+    from configurations.documentation
+    into 'build/connectorArchive/doc'
+}
+
+task connectorArchive_CopyDependenciesToBuildDirectory(type: Copy) {
+    description = "Copy the dependency jars into the lib folder"
+    group = 'connector archive'
+    dependsOn = [jar]
+
+    from jar
+    from configurations.compile
+    into 'build/connectorArchive/lib'
+}
+
+task connectorArchive_BuildDirectory() {
+    description = "Build the directory that will be used to create the Kafka Connector Archive"
+    dependsOn = [connectorArchive_CopyManifestToBuildDirectory,
+                 connectorArchive_CopyDependenciesToBuildDirectory,
+                 connectorArchive_CopyDocumentationToBuildDirectory,
+                 connectorArchive_CopyEtcToBuildDirectory,
+                 connectorArchive_CopyAssetsToBuildDirectory]
+    group = 'connector archive'
+}
+
+task connectorArchive(type: Zip, dependsOn: connectorArchive_BuildDirectory) {
+    description = 'Build a Connector Hub for the Confluent Connector Hub'
+    group = 'connector archive'
+
+    from 'build/connectorArchive'
+    include '*'
+    include '*/*'
+    archiveName "${componentOwner}-${componentName}-${version}.zip"
+    destinationDir(file('build/distro'))
+}
