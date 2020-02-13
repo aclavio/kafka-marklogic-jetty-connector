@@ -22,7 +22,7 @@ dependencies {
         exclude module: "marklogic-xcc"
         exclude module: "spring-context"
     }
-    compile "org.eclipse.jetty:jetty-servlet:9.3.14.v20161028"
+    compile "org.eclipse.jetty:jetty-servlet:9.4.24.v20191120"
 
     compileOnly "org.apache.kafka:connect-api:2.3.0"
 

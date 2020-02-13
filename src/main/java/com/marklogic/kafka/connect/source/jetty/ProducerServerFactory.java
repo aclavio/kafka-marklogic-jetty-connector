@@ -4,7 +4,10 @@ import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLEngine;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ProducerServerFactory {
+
+    private static Logger logger = LoggerFactory.getLogger(ProducerServerFactory.class);
 
     private ProducerServerFactory() {}
 
@@ -56,7 +61,7 @@ public class ProducerServerFactory {
         //server.addConnector(http);
 
         // Configure SSL, KeyStore, TrustStore, Ciphers
-        SslContextFactory sslContextFactory = new SslContextFactory();
+        SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setKeyStorePath(keystorePath);
         sslContextFactory.setKeyStorePassword(keystorePassword);
         sslContextFactory.setKeyManagerPassword(keystoreManagerPassword);
@@ -64,6 +69,28 @@ public class ProducerServerFactory {
         sslContextFactory.setTrustStorePassword(truststorePassword);
         // force client authentication
         sslContextFactory.setNeedClientAuth(clientAuth);
+
+        logger.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        logger.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        logger.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        logger.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        logger.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+
+//        sslContextFactory.setIncludeCipherSuites("^.*_(MD5|SHA|SHA1)$,^TLS_RSA_.*$,^SSL_.*$,^.*_NULL_.*$,^.*_anon_.*$");
+//        sslContextFactory.setExcludeCipherSuites("");
+//        sslContextFactory.setIncludeProtocols("SSL", "SSLv2", "SSLv2Hello", "SSLv3");
+//        sslContextFactory.setExcludeProtocols("");
+
+        sslContextFactory.setIncludeProtocols("TLSv1.2", "TLSv1.1", "TLSv1");
+
+        //sslContextFactory.setExcludeCipherSuites("^.*_(MD5)$");
+        //sslContextFactory.setExcludeProtocols("SSL,SSLv2,SSLv2Hello,SSLv3");
+
+        logger.info("getExcludeCipherSuites: {}", String.join(",", sslContextFactory.getExcludeCipherSuites()));
+        logger.info("getIncludeCipherSuites: {}", String.join(",", sslContextFactory.getIncludeCipherSuites()));
+
+        logger.info("getExcludeProtocols: {}", String.join(",", sslContextFactory.getExcludeProtocols()));
+        logger.info("getIncludeProtocols: {}", String.join(",", sslContextFactory.getIncludeProtocols()));
 
         // SSL HTTP Configuration
         HttpConfiguration httpsConfig = new HttpConfiguration(httpConfig);
