@@ -67,4 +67,4 @@ To send messages to Kafka via the included MarkLogic Module:
 | jetty.ssl.keystore.manager.password |  | keystore manager password |
 | jetty.ssl.truststore.path |  | Path the the truststore used by secure Jetty |
 | jetty.ssl.truststore.password |  | truststore password |
-| jetty.ssl.client.auth | true | require client authentication |
+| jetty.ssl.client.auth | false | require client authentication |

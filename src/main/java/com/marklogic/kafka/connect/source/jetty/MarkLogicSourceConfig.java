@@ -30,7 +30,7 @@ public class MarkLogicSourceConfig extends AbstractConfig {
         .define(JETTY_KEYSTORE_MANAGER_PASSWORD, Type.STRING, Importance.HIGH, "keystore manager password")
         .define(JETTY_TRUSTSTORE_PATH, Type.STRING, Importance.HIGH, "Path the the truststore used by secure Jetty")
         .define(JETTY_TRUSTSTORE_PASSWORD, Type.STRING, Importance.HIGH, "truststore password")
-	    .define(JETTY_CLIENT_AUTH, Type.BOOLEAN, "true", Importance.HIGH, "require client authentication");
+	    .define(JETTY_CLIENT_AUTH, Type.BOOLEAN, "false", Importance.HIGH, "require client authentication");
 
 	public MarkLogicSourceConfig(final Map<?, ?> originals) {
 		super(CONFIG_DEF, originals, false);
