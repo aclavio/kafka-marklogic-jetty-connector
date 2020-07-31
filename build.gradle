@@ -31,13 +31,18 @@ dependencies {
     testImplementation "org.apache.kafka:connect-runtime:2.3.1"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.2"
 
+    //runtime "ch.qos.logback:logback-classic:1.1.8"
+
     testRuntime "ch.qos.logback:logback-classic:1.1.8"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:5.4.2"
     testRuntime "org.slf4j:jcl-over-slf4j:1.7.22"
     testRuntime "org.slf4j:slf4j-api:1.7.22"
 
-    documentation files('LICENSE.txt')
+    documentation files('LICENSE')
     documentation files('README.md')
+
+    assets files('MarkLogic_logo.png')
+    assets files('apache_logo.png')
 }
 
 test {
@@ -47,6 +52,13 @@ test {
 // Customize the Java plugin's jar task to produce a "fat" jar with all dependencies included
 jar {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+task stageDockerDirectory(type: Copy, dependsOn: jar) {
+    mustRunAfter jar
+    from "${buildDir}/libs/${project.name}-${version}.jar"
+    rename(".*", "${project.name}.jar")
+    into "docker"
 }
 
 task copyJarToKafka(type: Copy) {

@@ -12,7 +12,7 @@ public class ProducerServerFactoryTest {
     Logger logger = LoggerFactory.getLogger(ProducerServerFactoryTest.class);
 
     @Test
-    public void testUnsecuredServer() {
+    public void testUnsecuredServer() throws Exception {
         Server server = ProducerServerFactory.createServer(9090);
         boolean success = false;
 
@@ -32,7 +32,7 @@ public class ProducerServerFactoryTest {
     }
 
     @Test
-    public void testSecureServer() {
+    public void testSecureServer() throws Exception {
         Server server = ProducerServerFactory.createSecureServer(9090,
                 "",
                 "",

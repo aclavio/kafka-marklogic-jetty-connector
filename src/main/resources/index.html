@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kafka | MarkLogic | Jetty - Producer service</title>
+    <link rel="stylesheet" href="bootstrap.min.css"/>
+    <style>
+        body {
+            display: grid;
+            grid-template-columns: auto;
+            grid-template-rows: 100px auto 50px;
+            grid-template-areas:
+                    "head"
+                    "main"
+                    "foot";
+            height: 100vh;
+        }
+
+        header {
+            grid-area: head;
+            background-color: #333;
+            color: #eee;
+            display: flex;
+            flex-direction: column;
+            align-content: center;
+            justify-content: center;
+        }
+
+        section.main {
+            grid-area: main;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+        }
+
+        footer {
+            grid-area: foot;
+            background-color: #aaa;
+        }
+
+        article:first-child {
+            margin-top: 1rem;
+        }
+
+        article {
+            margin-bottom: 1rem;
+            width: 800px;
+        }
+    </style>
+</head>
+<body>
+    <header class="container-fluid">
+        <h1>MarkLogic & Jetty Connector for Kafka Connect</h1>
+    </header>
+    <section class="main container-fluid">
+        <article id="usage" class="card">
+            <div class="card-body">
+                <h5 class="card-title">Connector Usage:</h5>
+                <pre><code>
+                    POST {url}/topics/{topic}
+                    BODY {payload}
+                </code></pre>
+                <a href="kafka-client.sjs" target="_blank" class="card-link">MarkLogic Kafka Client Module</a>
+            </div>
+        </article>
+        <article id="test" class="card">
+            <div class="card-body">
+                <h5 class="card-title">Connector Test:</h5>
+                <form id="formTest">
+                    <div class="form-group">
+                        <label for="txtTopic">Topic</label>
+                        <input type="text" class="form-control" id="txtTopic" placeholder="topic" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cmbType">Content Type</label>
+                        <select class="form-control" id="cmbType">
+                            <option>application/json</option>
+                            <option>text/plain</option>
+                            <option>text/xml</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="txtPayload">Payload</label>
+                        <textarea class="form-control" id="txtPayload" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </article>
+    </section>
+    <footer class="container-fluid">
+        <a href="https://github.com/aclavio/kafka-marklogic-jetty-connector" target="_blank">GitHub Documentation</a>
+    </footer>
+    <script>
+        document.getElementById('formTest').addEventListener('submit', evt => {
+            evt.preventDefault();
+            const topic = document.getElementById('txtTopic').value.trim();
+            const type = document.getElementById('cmbType').value;
+            const payload = document.getElementById('txtPayload').value;
+            if (topic.length > 0 && payload.length > 0) {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `/topics/${encodeURIComponent(topic)}`);
+                xhr.setRequestHeader('Content-Type', type);
+                xhr.onload = () => {
+                    if (xhr.status === 200) {
+                        alert('Success!')
+                    } else {
+                        alert('Something went wrong.  Check console for logs.');
+                    }
+                    console.log(xhr.status);
+                    console.log(xhr.responseText);
+                }
+                xhr.send(payload);
+            }
+        });
+    </script>
+</body>
+</html>
