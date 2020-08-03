@@ -8,7 +8,7 @@
         body {
             display: grid;
             grid-template-columns: auto;
-            grid-template-rows: 100px auto 50px;
+            grid-template-rows: auto 1fr auto;
             grid-template-areas:
                     "head"
                     "main"
@@ -21,9 +21,10 @@
             background-color: #333;
             color: #eee;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-content: center;
             justify-content: center;
+            padding: 0.5rem;
         }
 
         section.main {
@@ -36,7 +37,17 @@
 
         footer {
             grid-area: foot;
-            background-color: #aaa;
+            background-color: #ccc;
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+            justify-content: space-between;
+            padding: 0.5rem;
+        }
+
+        pre {
+            background-color: #f5f5f5;
+            border-radius: 0.5rem;
         }
 
         article:first-child {
@@ -47,6 +58,10 @@
             margin-bottom: 1rem;
             width: 800px;
         }
+
+        #Marklogic-Logo {
+            height: 2rem;
+        }
     </style>
 </head>
 <body>
@@ -56,17 +71,28 @@
     <section class="main container-fluid">
         <article id="usage" class="card">
             <div class="card-body">
-                <h5 class="card-title">Connector Usage:</h5>
+                <h5 class="card-title">Connector Usage</h5>
+                <p class="card-text">Using a rest client submit a post request to the "topics" endpoint.</p>
                 <pre><code>
-                    POST {url}/topics/{topic}
-                    BODY {payload}
+  POST {url}/topics/{topic}
+  BODY {payload}
+                </code></pre>
+                <p class="card-text">Download and utilize the included MarkLogic Kafka Client to publish to a Kafka topic from within MarkLogic.</p>
+                <pre><code>
+  const KafkaClient = require('/kafka-client.sjs');
+  let client = new KafkaClient('localhost', 9090);
+  client.post('mytopic', {
+    hello: "World!"
+  }, {
+     credentialId: xdmp.credentialId('myCredentialName')
+  });
                 </code></pre>
                 <a href="kafka-client.sjs" target="_blank" class="card-link">MarkLogic Kafka Client Module</a>
             </div>
         </article>
         <article id="test" class="card">
             <div class="card-body">
-                <h5 class="card-title">Connector Test:</h5>
+                <h5 class="card-title">Connector Test</h5>
                 <form id="formTest">
                     <div class="form-group">
                         <label for="txtTopic">Topic</label>
@@ -90,6 +116,7 @@
         </article>
     </section>
     <footer class="container-fluid">
+        <a href="https://marklogic.com" target="_blank"><img id="Marklogic-Logo" src="MarkLogic_logo.png"></a>
         <a href="https://github.com/aclavio/kafka-marklogic-jetty-connector" target="_blank">GitHub Documentation</a>
     </footer>
     <script>
