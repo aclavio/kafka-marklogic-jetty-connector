@@ -2,42 +2,70 @@ package com.marklogic.kafka.connect.source.jetty;
 
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.server.*;
-import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class ProducerServerFactory {
 
     private static Logger logger = LoggerFactory.getLogger(ProducerServerFactory.class);
 
-    private ProducerServerFactory() {}
-
-    public static ServletHandler createServletHandler() {
-        ServletHandler handler = new ServletHandler();
-        // Main Servlet for publishing to Kafka
-        ServletHolder holder = new ServletHolder(new ProducerServlet());
-        handler.addServletWithMapping(holder, "/topics/*");
-        // Redirect Servlet for root requests
-        ServletHolder redirectHandler = new ServletHolder();
-        redirectHandler.setServlet(new HttpServlet() {
-            @Override
-            protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-                resp.sendRedirect("/topics/");
-            }
-        });
-        handler.addServletWithMapping(redirectHandler, "/*");
-        return handler;
+    public static void main(String[] args) throws Exception {
+        Server server = ProducerServerFactory.createServer(9090);
+        server.start();
+        server.join();
     }
 
-    public static Server createServer(int port) {
+    private ProducerServerFactory() {}
+
+    public static URI getWebrootUri() throws IllegalStateException, URISyntaxException {
+        URL webRootLocation = ProducerServlet.class.getClassLoader().getResource("index.html");
+        if (webRootLocation == null) {
+            throw new IllegalStateException("unable to determine webroot url location");
+        }
+
+        URI webRootUri = URI.create(webRootLocation.toURI().toASCIIString().replaceFirst("/index.html$", "/"));
+        logger.error("webRootUrl {}", webRootLocation);
+        logger.error("webRootUri {}", webRootUri);
+
+        return webRootUri;
+    }
+
+    public static Handler createServletHandler() throws Exception {
+         // Main Servlet for publishing to Kafka
+        ServletHolder holder = new ServletHolder(new ProducerServlet());
+        ServletContextHandler servletContext = new ServletContextHandler();
+        servletContext.addServlet(holder, "/*");
+        servletContext.setContextPath("/topics/");
+
+        // Serve static resources
+        ResourceHandler resourceHandler = new ResourceHandler();
+        resourceHandler.setDirectoriesListed(false);
+        ContextHandler resourceContext = new ContextHandler();
+        resourceContext.setContextPath("/");
+        resourceContext.setWelcomeFiles(new String[]{"index.html"});
+        resourceContext.setBaseResource(Resource.newResource(getWebrootUri()));
+        resourceContext.setHandler(resourceHandler);
+
+        ContextHandlerCollection contexts = new ContextHandlerCollection(
+                servletContext,
+                resourceContext
+        );
+
+        return contexts;
+    }
+
+    public static Server createServer(int port) throws Exception {
         Server server = new Server(port);
         server.setHandler(createServletHandler());
         return server;
@@ -49,7 +77,7 @@ public class ProducerServerFactory {
                                       String keystoreManagerPassword,
                                       String truststorePath,
                                       String truststorePassword,
-                                      boolean clientAuth) {
+                                      boolean clientAuth) throws Exception {
         Server server = new Server();
 
         // HTTP configuration

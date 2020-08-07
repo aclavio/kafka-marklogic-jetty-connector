@@ -44,23 +44,6 @@ public class ProducerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         logger.info("in ProducerServlet doGet()");
-        resp.setStatus(HttpServletResponse.SC_OK);
-        resp.setContentType("text/html");
-
-        StringBuilder page = new StringBuilder();
-
-        page.append("<html>");
-        page.append("<head>");
-        page.append("<title>Kafka MarkLogic & Jetty Connector - Producer service</title>");
-        page.append("</head>");
-        page.append("<body>");
-        page.append("<div>");
-        page.append("<h1>USAGE:</h1>");
-        page.append("<span>Post {url}/topics/{topic}<br>Body: {payload}</span>");
-        page.append("</div>");
-        page.append("</body>");
-        page.append("</html>");
-
-        resp.getWriter().println(page.toString());
+        resp.sendRedirect("/");
     }
 }

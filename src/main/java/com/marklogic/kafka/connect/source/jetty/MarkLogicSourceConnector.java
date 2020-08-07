@@ -28,29 +28,29 @@ public class MarkLogicSourceConnector extends SourceConnector {
         port = Integer.parseInt(config.get(MarkLogicSourceConfig.JETTY_PORT));
         boolean isSecureServer = Boolean.parseBoolean(config.get(MarkLogicSourceConfig.JETTY_SECURE));
 
-        if (isSecureServer) {
-            logger.info("starting Secure Jetty server on port {}", port);
-            String keystorePath = config.get(MarkLogicSourceConfig.JETTY_KEYSTORE_PATH);
-            String keystorePassword = config.get(MarkLogicSourceConfig.JETTY_KEYSTORE_PASSWORD);
-            String keystoreManagerPassword = config.get(MarkLogicSourceConfig.JETTY_KEYSTORE_MANAGER_PASSWORD);
-            String truststorePath = config.get(MarkLogicSourceConfig.JETTY_TRUSTSTORE_PATH);
-            String truststorePassword = config.get(MarkLogicSourceConfig.JETTY_TRUSTSTORE_PASSWORD);
-            boolean clientAuth = Boolean.parseBoolean(config.get(MarkLogicSourceConfig.JETTY_CLIENT_AUTH));
-            logger.info("  keystore: {}", keystorePath);
-            logger.info("  truststore: {}", truststorePath);
-            server = ProducerServerFactory.createSecureServer(port,
-                    keystorePath,
-                    keystorePassword,
-                    keystoreManagerPassword,
-                    truststorePath,
-                    truststorePassword,
-                    clientAuth);
-        } else {
-            logger.info("starting *unsecured* Jetty server on port {}", port);
-            server = ProducerServerFactory.createServer(port);
-        }
-
         try {
+            if (isSecureServer) {
+                logger.info("starting Secure Jetty server on port {}", port);
+                String keystorePath = config.get(MarkLogicSourceConfig.JETTY_KEYSTORE_PATH);
+                String keystorePassword = config.get(MarkLogicSourceConfig.JETTY_KEYSTORE_PASSWORD);
+                String keystoreManagerPassword = config.get(MarkLogicSourceConfig.JETTY_KEYSTORE_MANAGER_PASSWORD);
+                String truststorePath = config.get(MarkLogicSourceConfig.JETTY_TRUSTSTORE_PATH);
+                String truststorePassword = config.get(MarkLogicSourceConfig.JETTY_TRUSTSTORE_PASSWORD);
+                boolean clientAuth = Boolean.parseBoolean(config.get(MarkLogicSourceConfig.JETTY_CLIENT_AUTH));
+                logger.info("  keystore: {}", keystorePath);
+                logger.info("  truststore: {}", truststorePath);
+                server = ProducerServerFactory.createSecureServer(port,
+                        keystorePath,
+                        keystorePassword,
+                        keystoreManagerPassword,
+                        truststorePath,
+                        truststorePassword,
+                        clientAuth);
+            } else {
+                logger.info("starting *unsecured* Jetty server on port {}", port);
+                server = ProducerServerFactory.createServer(port);
+            }
+
             server.start();
             //server.join();
         } catch (Exception ex) {
