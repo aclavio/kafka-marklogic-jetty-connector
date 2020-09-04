@@ -98,13 +98,19 @@
                         <label for="txtTopic">Topic</label>
                         <input type="text" class="form-control" id="txtTopic" placeholder="topic" required>
                     </div>
-                    <div class="form-group">
-                        <label for="cmbType">Content Type</label>
-                        <select class="form-control" id="cmbType">
-                            <option>application/json</option>
-                            <option>text/plain</option>
-                            <option>text/xml</option>
-                        </select>
+                    <div class="row">
+                        <div class="form-group col">
+                            <label for="cmbType">Content Type</label>
+                            <select class="form-control" id="cmbType">
+                                <option>application/json</option>
+                                <option>text/plain</option>
+                                <option>text/xml</option>
+                            </select>
+                        </div>
+                        <div class="form-group col">
+                            <label for="txtKey">Key</label>
+                            <input type="text" class="form-control" id="txtKey" placeholder="key (optional)">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="txtPayload">Payload</label>
@@ -125,10 +131,14 @@
             const topic = document.getElementById('txtTopic').value.trim();
             const type = document.getElementById('cmbType').value;
             const payload = document.getElementById('txtPayload').value;
+            const key = document.getElementById('txtKey').value;
             if (topic.length > 0 && payload.length > 0) {
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', `/topics/${encodeURIComponent(topic)}`);
                 xhr.setRequestHeader('Content-Type', type);
+                if (key && key !== '') {
+                    xhr.setRequestHeader('X-KEY', key.trim());
+                }
                 xhr.onload = () => {
                     if (xhr.status === 200) {
                         alert('Success!')

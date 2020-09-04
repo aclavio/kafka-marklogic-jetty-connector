@@ -3,6 +3,7 @@ package com.marklogic.kafka.connect.source;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class MessageQueue {
 
@@ -13,15 +14,19 @@ public class MessageQueue {
     }
 
     public static class Message {
+        private String key;
         private String topic;
         private String mimeType;
         private String payload;
 
-        public Message(String topic, String mimeType, String payload) {
+        public Message(String key, String topic, String mimeType, String payload) {
+            this.key = key;
             this.topic = topic;
             this.mimeType = mimeType;
             this.payload = payload;
         }
+
+        public String getKey() { return  key; }
 
         public String getMimeType() {
             return mimeType;
@@ -51,7 +56,12 @@ public class MessageQueue {
     }
 
     public void enqueue(String topic, String mimeType, String payload) {
-        queue.add(new Message(topic, mimeType, payload));
+        String identifier = UUID.randomUUID().toString();
+        queue.add(new Message(identifier, topic, mimeType, payload));
+    }
+
+    public void enqueue(String key, String topic, String mimeType, String payload) {
+        queue.add(new Message(key, topic, mimeType, payload));
     }
 
     public void clear() { queue.clear(); }

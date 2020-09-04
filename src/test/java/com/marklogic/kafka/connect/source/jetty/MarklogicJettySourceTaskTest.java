@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MarklogicJettySourceTaskTest {
@@ -23,7 +22,7 @@ public class MarklogicJettySourceTaskTest {
         queue.clear();
         queue.enqueue("first", "plain/text", "first");
         queue.enqueue("second", "application/json", "{ \"foo\":\"bar\" }");
-        queue.enqueue(new MessageQueue.Message("third", "text/xml", "<foo>bar</foo>"));
+        queue.enqueue(new MessageQueue.Message("12345", "third", "text/xml", "<foo>bar</foo>"));
         task.start(new HashMap<>());
     }
 
