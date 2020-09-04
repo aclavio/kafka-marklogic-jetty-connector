@@ -40,8 +40,7 @@ public class MarkLogicJettySourceTask extends SourceTask {
             Iterator<MessageQueue.Message> it = messages.iterator();
             while (it.hasNext()) {
                 MessageQueue.Message msg = it.next();
-                logger.debug("found message: {}|{}|{}|{}", msg.getKey(), msg.getTopic(), msg.getMimeType(), msg.getPayload());
-                //records.add(new SourceRecord(null, null, msg.getTopic(), Schema.STRING_SCHEMA, msg.getPayload()));
+                logger.debug("found message: {}|{}|{}|{}", msg.getKey(), msg.getTopic(), msg.getMimeType(), msg.getPayload().length());
                 records.add(new SourceRecord(null, null, msg.getTopic(), Schema.STRING_SCHEMA, msg.getKey(), Schema.STRING_SCHEMA, msg.getPayload()));
             }
             messages.clear();

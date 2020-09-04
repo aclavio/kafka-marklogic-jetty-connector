@@ -6,7 +6,7 @@
  * Usage:
  *
  * const KafkaClient = require('/kafka-client.sjs');
- * const client = new KafkaClient(host, port, isSsl, globalHttpOptions);
+ * const client = new KafkaClient(host, port, isSsl, httpOptions);
  * client.post('topic', { foo: 'bar' });
  */
 
