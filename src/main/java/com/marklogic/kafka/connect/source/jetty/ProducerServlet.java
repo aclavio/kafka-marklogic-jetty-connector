@@ -14,8 +14,9 @@ import java.util.stream.Collectors;
 
 public class ProducerServlet extends HttpServlet {
 
-    private static Logger logger = LoggerFactory.getLogger(ProducerServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProducerServlet.class);
 
+    private String keyHeaderName = "X-KEY";
     private MessageQueue queue = MessageQueue.getInstance();
 
     protected String getTopicFromPath(String path) {
@@ -26,13 +27,15 @@ public class ProducerServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        logger.info("in ProducerServlet doPost()");
+        logger.debug("in ProducerServlet doPost()");
 
         String mimeType = req.getHeader("Content-Type");
         String topic = getTopicFromPath(req.getPathInfo());
         String content = req.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+        String keyHeader = req.getHeader(keyHeaderName);
 
-        MessageQueue.Message msg = new MessageQueue.Message(topic, mimeType, content);
+        logger.info("ProducerServlet received message: {}", (keyHeader != null) ? keyHeader : "unspecified");
+        MessageQueue.Message msg = new MessageQueue.Message(keyHeader, topic, mimeType, content);
         queue.enqueue(msg);
 
         resp.setStatus(HttpServletResponse.SC_OK);
@@ -45,5 +48,13 @@ public class ProducerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         logger.info("in ProducerServlet doGet()");
         resp.sendRedirect("/");
+    }
+
+    public String getKeyHeaderName() {
+        return keyHeaderName;
+    }
+
+    public void setKeyHeaderName(String keyHeaderName) {
+        this.keyHeaderName = keyHeaderName;
     }
 }

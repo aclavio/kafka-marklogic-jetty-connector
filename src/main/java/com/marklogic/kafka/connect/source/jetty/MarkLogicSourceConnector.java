@@ -19,7 +19,7 @@ public class MarkLogicSourceConnector extends SourceConnector {
     private int port;
     private Map<String, String> config;
 
-    public static final String MARKLOGIC_CONNECTOR_VERSION = "0.9.0";
+    public static final String MARKLOGIC_CONNECTOR_VERSION = "1.3.0";
 
     @Override
     public void start(Map<String, String> props) {

@@ -15,7 +15,7 @@ public class MarkLogicSourceConnectorTest {
     public void testSourceConnector() throws Exception {
         mlSourceConn = new MarkLogicSourceConnector();
         Map<String, String> props = new HashMap<>();
-        props.put(MarkLogicSourceConfig.JETTY_PORT, "9090");
+        props.put(MarkLogicSourceConfig.JETTY_PORT, "9999");
         props.put("topic", "test");
         mlSourceConn.start(props);
         Thread.sleep(1000);
