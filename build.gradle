@@ -23,7 +23,8 @@ dependencies {
         exclude module: "marklogic-xcc"
         exclude module: "spring-context"
     }
-    compile "org.eclipse.jetty:jetty-servlet:9.4.24.v20191120"
+    compile "org.eclipse.jetty:jetty-servlet:9.4.35.v20201120"
+    //compile "org.eclipse.jetty:jetty-servlet:11.0.0"
 
     compileOnly "org.apache.kafka:connect-api:2.3.0"
 
@@ -31,7 +32,7 @@ dependencies {
     testImplementation "org.apache.kafka:connect-runtime:2.3.1"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.2"
 
-    //runtime "ch.qos.logback:logback-classic:1.1.8"
+    runtime "ch.qos.logback:logback-classic:1.1.8"
 
     testRuntime "ch.qos.logback:logback-classic:1.1.8"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:5.4.2"

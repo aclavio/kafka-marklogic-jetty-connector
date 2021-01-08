@@ -21,7 +21,14 @@ public class ProducerServerFactory {
     private static Logger logger = LoggerFactory.getLogger(ProducerServerFactory.class);
 
     public static void main(String[] args) throws Exception {
-        Server server = ProducerServerFactory.createServer(9090);
+        Server server;
+
+        if (args.length > 0) {
+            server = ProducerServerFactory.createSecureServer(9090, args[0], args[1], args[2], args[3], args[4], Boolean.parseBoolean(args[5]));
+        } else {
+            server = ProducerServerFactory.createServer(9090);
+        }
+
         server.start();
         server.join();
     }
@@ -86,6 +93,7 @@ public class ProducerServerFactory {
         httpConfig.setSecurePort(port);
         httpConfig.setSendServerVersion(true);
         httpConfig.setSendDateHeader(false);
+        httpConfig.addCustomizer(new SecureRequestCustomizer());
 
         // Configure SSL, KeyStore, TrustStore, Ciphers
         SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
@@ -99,8 +107,10 @@ public class ProducerServerFactory {
         sslContextFactory.setNeedClientAuth(clientAuth);
 
         // acceptable protocols and ciphers
-        sslContextFactory.setIncludeCipherSuites("^TLS.*$");
-        sslContextFactory.setIncludeProtocols("TLSv1.3", "TLSv1.2", "TLSv1.1");
+        //sslContextFactory.setIncludeCipherSuites("^TLS.*$");
+        //sslContextFactory.setIncludeProtocols("TLSv1.3", "TLSv1.2", "TLSv1.1");
+        //sslContextFactory.setExcludeCipherSuites("");
+        //sslContextFactory.setExcludeProtocols("");
 
         logger.debug("getExcludeCipherSuites: {}", String.join(",", sslContextFactory.getExcludeCipherSuites()));
         logger.debug("getIncludeCipherSuites: {}", String.join(",", sslContextFactory.getIncludeCipherSuites()));
