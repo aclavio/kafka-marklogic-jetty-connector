@@ -3,6 +3,7 @@
   "tasks.max": "1",
   "jetty.port": "%s",
   "jetty.secure": "%s",
+  "jetty.secure.port": "%s",
   "jetty.ssl.client.auth": "%s",
   "jetty.ssl.keystore.path": "%s",
   "jetty.ssl.keystore.password": "%s",

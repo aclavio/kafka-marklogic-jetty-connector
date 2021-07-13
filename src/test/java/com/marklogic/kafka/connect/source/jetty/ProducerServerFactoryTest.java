@@ -35,6 +35,7 @@ public class ProducerServerFactoryTest {
     // TODO provide a test keystore
     public void testSecureServer() throws Exception {
         Server server = ProducerServerFactory.createSecureServer(9999,
+                443,
                 System.getProperty("javax.net.ssl.keyStore"),
                 "",
                 "",

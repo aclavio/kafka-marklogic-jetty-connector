@@ -17,9 +17,10 @@ public class MarkLogicSourceConnector extends SourceConnector {
 
     private Server server;
     private int port;
+    private int securePort;
     private Map<String, String> config;
 
-    public static final String MARKLOGIC_CONNECTOR_VERSION = "1.3.0";
+    public static final String MARKLOGIC_CONNECTOR_VERSION = "1.3.4";
 
     @Override
     public void start(Map<String, String> props) {
@@ -30,7 +31,8 @@ public class MarkLogicSourceConnector extends SourceConnector {
 
         try {
             if (isSecureServer) {
-                logger.info("starting Secure Jetty server on port {}", port);
+                securePort = Integer.parseInt(config.get(MarkLogicSourceConfig.JETTY_SECURE_PORT));
+                logger.info("starting Secure Jetty server on port {}", securePort);
                 String keystorePath = config.get(MarkLogicSourceConfig.JETTY_KEYSTORE_PATH);
                 String keystorePassword = config.get(MarkLogicSourceConfig.JETTY_KEYSTORE_PASSWORD);
                 String keystoreManagerPassword = config.get(MarkLogicSourceConfig.JETTY_KEYSTORE_MANAGER_PASSWORD);
@@ -40,6 +42,7 @@ public class MarkLogicSourceConnector extends SourceConnector {
                 logger.info("  keystore: {}", keystorePath);
                 logger.info("  truststore: {}", truststorePath);
                 server = ProducerServerFactory.createSecureServer(port,
+                        securePort,
                         keystorePath,
                         keystorePassword,
                         keystoreManagerPassword,
