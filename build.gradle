@@ -73,12 +73,12 @@ task stageDockerDirectory(type: Copy, dependsOn: jar) {
     mustRunAfter jar
     from "${buildDir}/libs/${project.name}-${version}.jar"
     rename(".*", "${project.name}.jar")
-    into "docker"
+    into "Docker"
 }
 
 task buildDockerImage(type: Exec, dependsOn: stageDockerDirectory) {
-    workingDir 'docker'
-    commandLine 'docker', 'build', '-t', "kafka-jetty-marklogic-connector:${version}",  '-t', 'kafka-jetty-marklogic-connector:latest', '.'
+    workingDir 'Docker'
+    commandLine 'docker', 'build', '-t', "kafka-marklogic-jetty-connector:${version}",  '-t', 'kafka-marklogic-jetty-connector:latest', '.'
 }
 
 task copyJarToKafka(type: Copy) {
