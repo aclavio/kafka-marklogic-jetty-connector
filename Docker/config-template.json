@@ -1,0 +1,16 @@
+{
+  "connector.class": "com.marklogic.kafka.connect.source.jetty.MarkLogicSourceConnector",
+  "tasks.max": "1",
+  "jetty.port": "%s",
+  "jetty.secure": "%s",
+  "jetty.secure.port": "%s",
+  "jetty.ssl.client.auth": "%s",
+  "jetty.ssl.keystore.path": "%s",
+  "jetty.ssl.keystore.password": "%s",
+  "jetty.ssl.keystore.manager.password": "%s",
+  "jetty.ssl.truststore.path": "%s",
+  "jetty.ssl.truststore.password": "%s",
+  "errors.tolerance": "all",
+  "errors.log.enable": true,
+  "errors.log.include.messages": true
+}

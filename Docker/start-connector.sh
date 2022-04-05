@@ -17,27 +17,17 @@ if [ -z "$JETTY_SECURE" ]; then
   JETTY_SECURE="false"
 fi
 
+if [ -z "$JETTY_SECURE_PORT" ]; then
+  JETTY_SECURE_PORT="443"
+fi
+
 if [ -z "$JETTY_SSL_CLIENT_AUTH" ]; then
   JETTY_SSL_CLIENT_AUTH="true"
 fi
 
 # create payload for initializing connector using environment variables
-JSON_TEMPLATE='{
-  "connector.class": "com.marklogic.kafka.connect.source.jetty.MarkLogicSourceConnector",
-  "tasks.max": "1",
-  "jetty.port": "%s",
-  "jetty.secure": "%s",
-  "jetty.ssl.client.auth": "%s",
-  "jetty.ssl.keystore.path": "",
-  "jetty.ssl.keystore.password": "",
-  "jetty.ssl.keystore.manager.password": "",
-  "jetty.ssl.truststore.path": "",
-  "jetty.ssl.truststore.password": "",
-  "errors.tolerance": "all",
-  "errors.log.enable": true,
-  "errors.log.include.messages": true
-}'
-JSON_STRING=$( printf "$JSON_TEMPLATE" "$JETTY_PORT" "$JETTY_SECURE" "$JETTY_SSL_CLIENT_AUTH" )
+JSON_TEMPLATE=`cat config-template.json`
+JSON_STRING=$( printf "$JSON_TEMPLATE" "$JETTY_PORT" "$JETTY_SECURE" "$JETTY_SECURE_PORT" "$JETTY_SSL_CLIENT_AUTH" "$JETTY_SSL_KEYSTORE_PATH" "$JETTY_SSL_KEYSTORE_PASSWORD" "$JETTY_SSL_KEYSTORE_MANAGER_PASSWORD" "$JETTY_SSL_TRUSTSTORE_PATH" "$JETTY_SSL_TRUSTSTORE_PASSWORD" )
 
 echo "$JSON_STRING" > config.json
 

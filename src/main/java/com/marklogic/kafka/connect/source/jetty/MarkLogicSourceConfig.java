@@ -14,6 +14,7 @@ public class MarkLogicSourceConfig extends AbstractConfig {
 
 	public static final String JETTY_PORT = "jetty.port";
     public static final String JETTY_SECURE = "jetty.secure";
+	public static final String JETTY_SECURE_PORT = "jetty.secure.port";
     public static final String JETTY_KEYSTORE_PATH = "jetty.ssl.keystore.path";
     public static final String JETTY_KEYSTORE_PASSWORD = "jetty.ssl.keystore.password";
     public static final String JETTY_KEYSTORE_MANAGER_PASSWORD = "jetty.ssl.keystore.manager.password";
@@ -25,6 +26,7 @@ public class MarkLogicSourceConfig extends AbstractConfig {
 	public static ConfigDef CONFIG_DEF = new ConfigDef()
 		.define(JETTY_PORT, Type.STRING, Importance.HIGH, "Jetty Server port")
 	    .define(JETTY_SECURE, Type.BOOLEAN, "false", Importance.HIGH, "Use secure jetty server?")
+		.define(JETTY_SECURE_PORT, Type.STRING, "443", Importance.HIGH, "Jetty Server port for secure connections")
         .define(JETTY_KEYSTORE_PATH, Type.STRING, Importance.HIGH, "Path the the keystore used by secure Jetty")
         .define(JETTY_KEYSTORE_PASSWORD, Type.STRING, Importance.HIGH, "keystore password")
         .define(JETTY_KEYSTORE_MANAGER_PASSWORD, Type.STRING, Importance.HIGH, "keystore manager password")
